@@ -11,6 +11,7 @@ output:
     toc_float: true
     code_folding: hide
     keep_md: true
+    self_contained: false
 ---
 
 ```{r setup, include=FALSE}
