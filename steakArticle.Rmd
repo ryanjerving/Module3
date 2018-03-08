@@ -1,9 +1,11 @@
 ---
 title: "Steak Preferences in the U.S."
-subtitle: "Summary Report for the _**Mountain**_ Region"
-author: "Author: Ryan Jerving"
+author: 'Author: Ryan Jerving'
 date: "`r format(Sys.Date(), '%A, %B %d, %Y')`"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
+subtitle: Summary Report for the _**Mountain**_ Region
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +14,7 @@ output: html_document
 
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(results = FALSE)
+knitr::opts_chunk$set(messages = FALSE)
 
 # print blanks spaces rather than NAs for missing data in tables
 
@@ -37,22 +39,47 @@ sdat <- na.omit(steak_survey) %>%
 
 ```
 
-## R Markdown
+## Background
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+In May 2014, Walt Hickey at
+[538.com](http://fivethirtyeight.com/) published an
+article titled
+["How Americans Like Their Steak."](https://fivethirtyeight.com/features/how-americans-like-their-steak/) In this article, he utilized survey data collected from 550 people which asked questions related to various risky activities, such as whether they speed in traffic, if they smoke, if they skydive, and if they prefer a riskier-than-average lottery. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The survey also asked if they eat steak and, if so, how they prefer it to be cooked.
 
-```{r cars}
-summary(cars)
+## Purpose
+
+The "steak survey" dataset that was used for the ["How
+Americans Like Their Steak"](https://fivethirtyeight.com/features/how-americans-like-their-steak/) article is available through the R package [`fivethirtyeight`](https://cran.r-project.org/web/packages/fivethirtyeight/index.html).
+
+Using this dataset, this article summarizes the steak preferences for the _**Mountain**_ Region of the United States by gender.
+
+For our summary presented here, a subset of the original steak survey was extracted to only include responses with no missing data and only included respondents from the _**Mountain**_ region of the U.S. The data subset used for our summary had `r nrow(sdat)` respondents.
+
+
+## Demographic Summary Tables
+
+The age categories of the `r nrow(sdat)` survey
+respondents were:
+
+```{r}
+# create table of the age categories
+tb <- sdat %>%
+  select(age) %>%
+  table() %>%
+  prop.table()*100
+
+# convert table to data frame
+dt <- as.data.frame(tb)
+
+# use kable from knitr package to make table
+# and use kable styling from kableExtra package
+knitr::kable(dt, format="html",
+             col.names=c("Ages","%"),
+             digits=2,
+             caption="Ages of Survey Respondents") %>%
+  kableExtra::kable_styling(bootstrap_options ="striped",
+                            full_width=FALSE)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
