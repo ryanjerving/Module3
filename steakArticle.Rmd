@@ -60,8 +60,7 @@ For our summary presented here, a subset of the original steak survey was extrac
 
 ## Demographic Summary Tables
 
-The age categories of the `r nrow(sdat)` survey
-respondents were:
+The age categories of the `r nrow(sdat)` survey respondents were:
 
 ```{r}
 # create table of the age categories
@@ -82,4 +81,135 @@ knitr::kable(dt, format="html",
   kableExtra::kable_styling(bootstrap_options ="striped",
                             full_width=FALSE)
 ```
+
+The education levels of the `r nrow(sdat)` survey respondents were:
+
+```{r}
+
+# repeat for education
+
+tb <-sdat %>% 
+  select(educ) %>%
+  table() %>%
+  prop.table()*100
+
+dt <-as.data.frame(tb)
+
+knitr::kable(dt, format="html",
+             col.names=c("Education","%"),
+             digits=2,
+             caption="Education of Survey Respondents") %>%
+  kableExtra::kable_styling(bootstrap_options = "striped",
+                            full_width=FALSE)
+```
+
+The income levels of the `r nrow(sdat)` survey respondents were:
+
+```{r}
+# repeat for household income
+tb <-sdat %>% 
+  select(hhold_income) %>%
+  table() %>%
+  prop.table()*100
+
+dt <-as.data.frame(tb)
+
+knitr::kable(dt, format="html",
+             col.names=c("Income","%"),
+             digits=2,
+             caption="Income of Survey Respondents") %>%
+  kableExtra::kable_styling(bootstrap_options = "striped",
+                            full_width=FALSE)
+```
+
+
+## _OPTIONAL_ Demographics of Survey Respondents in a Merged Table
+
+This section is provided as an example of how to merge the three demographic summary tables for the `r nrow(sdat)` survey respondents above into a single merged table.
+
+```{r}
+
+# create table summary for ages
+
+tb1 <-sdat %>% 
+  select(age) %>%
+  table() %>%
+  prop.table()*100
+
+# create table summary for education
+
+tb2 <-sdat %>% 
+  select(educ) %>%
+  table() %>%
+  prop.table()*100
+
+# create table summary for income
+
+tb3 <-sdat %>% 
+  select(hhold_income) %>%
+  table() %>%
+  prop.table()*100
+
+# convert all tables to data frames
+
+tb1df <-as.data.frame(tb1) 
+tb2df <-as.data.frame(tb2)
+tb3df <-as.data.frame(tb3)
+
+# merge 1st 2 data frames together
+
+mtb <-merge(data.frame(tb1df, row.names = NULL),
+            data.frame(tb2df, row.names = NULL),
+            by=0, all=TRUE)[-1]
+
+# merge result with 3rd data frame
+
+mtb2 <-merge(data.frame(mtb, row.names = NULL),
+             data.frame(tb3df, row.names = NULL),
+             by=0, all=TRUE)[-1]
+
+# use the final data frame
+# make into a table with kable
+# add styling with kableExtra
+# add header with labels spanning 2 columns each
+
+mtb2 %>%
+ knitr::kable(format="html",
+              col.names=c("Category","%","Category","%","Category","%"),
+              digits=2,
+              caption="Demographics of Survey Respondents") %>%
+  kableExtra::kable_styling(c("striped","bordered"),
+                            full_width=FALSE) %>%
+  add_header_above(c("Ages"=2,"Education"=2,"Income"=2))
+
+```
+
+## Steak Preparation Preference by Gender
+
+Finally, here is a breakdown of the `r nrow(sdat)` survey respondents for the _**Mountain**_ region of the US on how they prefer their steak to be prepared by gender.
+
+```{r}
+
+# Create a plot of steak prep preferences for our chosen region
+# and broken out by gender.
+
+# Layer in some other style things: labels, fill pref., etc.
+
+ggplot(sdat, 
+       aes(x = steak_prep, 
+           fill = female)) + 
+  geom_bar(position="dodge",
+           colour="black") +
+  ggtitle(paste0("Steak Preference by Gender: ",
+          "Mountain"," Region")) +
+  xlab("Steak Preparation Preference") +
+  ylab("Number of Respondents") +
+  scale_fill_manual(values=c("skyblue","palevioletred"),
+                    name="Gender",
+                    breaks=c(FALSE,TRUE),
+                    labels=c("Male", "Female")) +
+  theme_fivethirtyeight()
+
+```
+
 
