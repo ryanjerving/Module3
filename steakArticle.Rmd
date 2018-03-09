@@ -3,8 +3,8 @@ title: "Steak Preferences in the U.S."
 author: 'Author: Ryan Jerving'
 date: "`r format(Sys.Date(), '%A, %B %d, %Y')`"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 subtitle: Summary Report for the _**Mountain**_ Region
 ---
 
